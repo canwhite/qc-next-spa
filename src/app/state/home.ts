@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createPersistStore } from "@/app/utils/store";
-import { StoreKey } from "../constant";
+import { StoreKey } from "../constants";
 
 type HomeState = {
   queries:string[],
@@ -34,7 +34,7 @@ const useHomeStore = createPersistStore(
     name: StoreKey.Home,
     version: 1,
     
-    migrate(state, version) {
+    migrate(state:HomeState, version:number) {
       /* 
         const newState = JSON.parse(JSON.stringify(state)) as MaskState;
     
@@ -55,10 +55,10 @@ const useHomeStore = createPersistStore(
 
         */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return state as any;
+      return state;
     },
 
-    onRehydrateStorage(state) {
+    onRehydrateStorage(state:HomeState) {
       //init，一些初始化操作
     },
   },

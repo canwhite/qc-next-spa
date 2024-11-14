@@ -7,11 +7,14 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 
+
+
 function parseMarkdown(content: string) {
   const lines = content.split('\n')
   const result = []
   let inCodeBlock = false
   let codeContent = ''
+  
   let currentList = null
 
   for (let i = 0; i < lines.length; i++) {
@@ -45,18 +48,22 @@ function parseMarkdown(content: string) {
       result.push(<h3 key={`h3-${i}`} className="text-lg font-semibold mt-2 mb-1">{line.slice(4)}</h3>)
     } else if (line.startsWith('- ') || line.startsWith('* ')) {
       if (!currentList || currentList.type !== 'ul') {
-        currentList = { type: 'ul', items: [] }
+        currentList = { type: 'ul', items: [] as JSX.Element[] }
         result.push(
           <ul key={`ul-${i}`} className="list-disc pl-5 my-2">
             {currentList.items}
           </ul>
         )
       }
+      
       currentList.items.push(<li key={`li-${i}`}>{line.slice(2)}</li>)
     
     }else if(line.startsWith('[') && line.includes('](')){
+        //TODO, 好像没有走到这里
         const [text, url] = line.slice(1, -1).split('](');
+        console.log(text, url);
         result.push(<a key={`link-${i}`} href={url} className="text-blue-600 hover:underline">{text}</a>)
+        
     } else if (/^\d+\.\s/.test(line)) {
       if (!currentList || currentList.type !== 'ol') {
         currentList = { type: 'ol', items: [] }
@@ -66,7 +73,7 @@ function parseMarkdown(content: string) {
           </ol>
         )
       }
-      currentList.items.push(<li key={`li-${i}`}>{line.slice(line.indexOf(' ') + 1)}</li>)
+      currentList.items.push(<li key={`li-${i}`}>{line.slice(line.indexOf(' ') + 1)}</li> as JSX.Element)
     } else if (line.startsWith('> ')) {
       result.push(<blockquote key={`quote-${i}`} className="border-l-4 border-gray-300 pl-4 italic my-2">{line.slice(2)}</blockquote>)
     } else if (line === '---') {
@@ -99,10 +106,10 @@ function parseMarkdown(content: string) {
 
 export  function Home() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState([])
+  const [searchResults, setSearchResults] = useState<{id:number,content:string}[]>([])
   const [hasSearched, setHasSearched] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSearch = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -114,7 +121,7 @@ export  function Home() {
       await new Promise(resolve => setTimeout(resolve, 1000))
 
       // Simulate search results (replace with actual API call in a real application)
-      const mockResults = [
+      const mockResults:{id:number , content:string}[] = [
         { id: 1, content: `# First search result
 
 URL: [https://example.com/1](https://example.com/1)
@@ -187,8 +194,8 @@ Here's a table:
 | Row 2    | Info     | Stuff    |
 
 And finally, here's some inline math: \`E = mc^2\`` },
-      ]
-
+      ] as const
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setSearchResults(mockResults)
       setHasSearched(true)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -231,6 +238,7 @@ And finally, here's some inline math: \`E = mc^2\`` },
           <p className="text-sm text-gray-600 mb-4">About {searchResults.length} results</p>
           <ScrollArea className="h-[calc(100vh-150px)] sm:h-[calc(100vh-200px)] rounded-md border p-4">
             {searchResults.map((result) => (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               <div key={result.id} className="mb-6">
                 {parseMarkdown(result.content)}
               </div>

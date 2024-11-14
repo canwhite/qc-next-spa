@@ -6,7 +6,7 @@ import {
   Route,
 } from "react-router-dom";
 
-import {Path} from "../constants.ts";
+import {Path} from "../constants";
 
 
 export function Loading() {
