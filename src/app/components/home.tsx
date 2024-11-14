@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 
-
+type SearchResult ={id:number,content:string}[]
 
 function parseMarkdown(content: string) {
   const lines = content.split('\n')
@@ -55,16 +55,31 @@ function parseMarkdown(content: string) {
           </ul>
         )
       }
-      
       currentList.items.push(<li key={`li-${i}`}>{line.slice(2)}</li>)
     
-    }else if(line.startsWith('[') && line.includes('](')){
-        //TODO, 好像没有走到这里
-        const [text, url] = line.slice(1, -1).split('](');
-        console.log(text, url);
-        result.push(<a key={`link-${i}`} href={url} className="text-blue-600 hover:underline">{text}</a>)
+    }
+    //解析[]()
+    else if(line.includes('](')){
+        const [preText, url] = line.slice(0, line.length).split('](');
+        const [preDes,text] = preText.split('[');
+        const [newUrl, endDes] = url.split(')');
+        result.push(
+            <p>
+                <span> {preDes}</span>
+                <a key={`link-${i}`} href={newUrl} className="text-blue-600 hover:underline">{text}</a>
+                <span> {endDes}</span>
+            </p>
+        )
         
-    } else if (/^\d+\.\s/.test(line)) {
+    } 
+    // 这个正则表达式 `/^\d+\.\s/` 用于匹配以数字开头，后跟一个点和一个空格的行。
+    // 例如，它可以匹配 "1. 这是一个列表项" 或 "2. 这是另一个列表项"。
+    // 具体来说：
+    // - `^` 表示行的开始。
+    // - `\d+` 表示一个或多个数字。
+    // - `\.` 表示一个点。
+    // - `\s` 表示一个空格。
+    else if (/^\d+\.\s/.test(line)) {
       if (!currentList || currentList.type !== 'ol') {
         currentList = { type: 'ol', items: [] }
         result.push(
@@ -104,9 +119,12 @@ function parseMarkdown(content: string) {
   return result
 }
 
+
+
 export  function Home() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<{id:number,content:string}[]>([])
+  //如果没给完整的初始值。就需要设置类型了，返回值默认，不需要加
+  const [searchResults, setSearchResults] = useState<SearchResult>([])
   const [hasSearched, setHasSearched] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -121,10 +139,10 @@ export  function Home() {
       await new Promise(resolve => setTimeout(resolve, 1000))
 
       // Simulate search results (replace with actual API call in a real application)
-      const mockResults:{id:number , content:string}[] = [
+      const mockResults:SearchResult = [
         { id: 1, content: `# First search result
 
-URL: [https://example.com/1](https://example.com/1)
+URL: [https://example.com/1](https://example.com/1)其他内容
 
 This is a description of the first search result. It provides a brief overview of the content.
 

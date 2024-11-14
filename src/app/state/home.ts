@@ -34,7 +34,7 @@ const useHomeStore = createPersistStore(
     name: StoreKey.Home,
     version: 1,
     
-    migrate(state:HomeState, version:number) {
+    migrate(state, version:number) {
       /* 
         const newState = JSON.parse(JSON.stringify(state)) as MaskState;
     
@@ -55,7 +55,7 @@ const useHomeStore = createPersistStore(
 
         */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return state;
+      return state as any;
     },
 
     onRehydrateStorage(state:HomeState) {
