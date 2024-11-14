@@ -73,12 +73,6 @@ function parseMarkdown(content: string) {
         
     } 
     // 这个正则表达式 `/^\d+\.\s/` 用于匹配以数字开头，后跟一个点和一个空格的行。
-    // 例如，它可以匹配 "1. 这是一个列表项" 或 "2. 这是另一个列表项"。
-    // 具体来说：
-    // - `^` 表示行的开始。
-    // - `\d+` 表示一个或多个数字。
-    // - `\.` 表示一个点。
-    // - `\s` 表示一个空格。
     else if (/^\d+\.\s/.test(line)) {
       if (!currentList || currentList.type !== 'ol') {
         currentList = { type: 'ol', items: [] }
