@@ -256,7 +256,6 @@ And finally, here's some inline math: \`E = mc^2\`` },
           <p className="text-sm text-gray-600 mb-4">About {searchResults.length} results</p>
           <ScrollArea className="h-[calc(100vh-150px)] sm:h-[calc(100vh-200px)] rounded-md border p-4">
             {searchResults.map((result) => (
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               <div key={result.id} className="mb-6">
                 {parseMarkdown(result.content)}
               </div>

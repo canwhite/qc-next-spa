@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { combine, persist, createJSONStorage } from "zustand/middleware";
 import { Updater } from "../typing";
 import { deepClone } from "./clone";
-import { indexedDBStorage } from "./localStorage";
+import { indexedDBStorage } from "./indexedDB-storage";
 
 
 /**
